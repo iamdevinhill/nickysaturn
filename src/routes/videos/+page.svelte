@@ -19,6 +19,8 @@
 			</div>
 			<h3>"Time Is Now"</h3>
 		</div>
+		<br>
+
 		<div class="video">
 			<div class="video-container">
 				<iframe
@@ -31,6 +33,8 @@
 			</div>
 			<h3>"Meant To Be"</h3>
 		</div>
+		<br>
+
 		<div class="video">
 			<div class="video-container">
 				<iframe
@@ -43,6 +47,7 @@
 			</div>
 			<h3>"Divine"</h3>
 		</div>
+		
 	</div>
 </div>
 
@@ -75,5 +80,11 @@
 		width: 100%;
 		height: 100%;
 		border-radius: 4px;
+	}
+
+	h3 {
+		margin: 0;
+		text-align: center;
+		font-size: 1.5rem;
 	}
 </style>
