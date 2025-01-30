@@ -10,7 +10,7 @@
 		<div class="video">
 			<div class="video-container">
 				<iframe
-					src="https://www.youtube.com/embed/p_6Bd88TYg4"
+					src="https://www.youtube.com/embed/f4f7-BW2ByA?si=436XSgH_KhGCZa2S" 
 					title="Time Is Now"
 					frameborder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -24,21 +24,7 @@
 		<div class="video">
 			<div class="video-container">
 				<iframe
-					src="https://www.youtube.com/embed/UYvG9zddJPY"
-					title="Meant To Be"
-					frameborder="0"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-					allowfullscreen
-				></iframe>
-			</div>
-			<h3>"Meant To Be"</h3>
-		</div>
-		<br>
-
-		<div class="video">
-			<div class="video-container">
-				<iframe
-					src="https://www.youtube.com/embed/dUnwU-h4-AE"
+				src="https://www.youtube.com/embed/VL-10FD5gvE?si=0QeF75L1N0cGBrIM" 
 					title="Divine"
 					frameborder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -46,6 +32,20 @@
 				></iframe>
 			</div>
 			<h3>"Divine"</h3>
+		</div>
+		<br>
+
+		<div class="video">
+			<div class="video-container">
+				<iframe
+				src="https://www.youtube.com/embed/F7a8K_MeFF4?si=fx2jL0xwdnHwyfn0" 
+					title="Fantastik"
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+					allowfullscreen
+				></iframe>
+			</div>
+			<h3>"Fantastik"</h3>
 		</div>
 		
 	</div>

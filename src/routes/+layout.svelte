@@ -24,7 +24,7 @@
 				<a href="https://music.apple.com/us/artist/nicky-saturn/1573096259" target="_blank" rel="noopener">
 					<i class="fab fa-apple"></i>
 				</a>
-				<a href="https://www.youtube.com/channel/UC7IS0ZVN3C5MQ5XBO_7ihYg" target="_blank" rel="noopener">
+				<a href="https://www.youtube.com/@nickysaturnmusic" target="_blank" rel="noopener">
 					<i class="fab fa-youtube"></i>
 				</a>
 				<a href="https://www.tiktok.com/@nickysaturnmusic?lang=en" target="_blank" rel="noopener">
