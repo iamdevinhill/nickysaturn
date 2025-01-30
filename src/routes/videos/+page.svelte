@@ -47,7 +47,19 @@
 			</div>
 			<h3>"Fantastik"</h3>
 		</div>
-		
+		<br>
+		<div class="video">
+			<div class="video-container">
+				<iframe
+				src="https://www.youtube.com/embed/DFApLB2HHFQ?si=q7mruL2L5XY1aNk7" 
+					title="Soak Up The Sun (Cover)"
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+					allowfullscreen
+				></iframe>
+			</div>
+			<h3>"Soak Up The Sun (Cover)"</h3>
+		</div>
 	</div>
 </div>
 
