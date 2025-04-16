@@ -132,11 +132,13 @@
 
 		.contact-info {
 			padding: 1.5rem;
+
 		}
 
 		.contact-form {
 			flex-direction: column;
 			padding: 0.5rem;
+			width: 100%;
 		}
 
 		.iframe-wrapper {
@@ -145,7 +147,8 @@
 		}
 
 		.submit-button {
-			width: 100%;
+		
+			width: 80%;
 			font-size: 1.1rem;
 			padding: 1rem;
 		}
