@@ -5,18 +5,41 @@
 
 <div class="container">
 	<h1>Contact</h1>
-	
+  
 	<div class="contact-content">
-		<div class="contact-info">
-			<h2>Get in Touch</h2>
-			<p>For booking inquiries and other business opportunities:</p>
-
-			<a href="mailto:nickysaturnmusic@gmail.com" class="submit-button">
-				Send Email
-			</a>
+	  <div class="contact-info">
+		<div class="get-in-touch">
+		  <h2>Get in Touch</h2>
+		  <p>For booking inquiries and other business opportunities:</p>
+  
+		  <a href="mailto:nickysaturnmusic@gmail.com" class="submit-button">
+			Send Email
+		  </a>
 		</div>
+<br><br>
+		<div class="mailing-list">
+		  <h2>Mailing List</h2>
+		  <p>Sign up for Nicky Saturn's mailing list for updates on new music, shows, and more.</p>
+  
+		  <div class="contact-form">
+			<div style="position: relative; width: 100%; max-width: 640px;">
+			  <iframe
+				src="https://docs.google.com/forms/d/e/1FAIpQLSeokl89e_3CQmiqdyBUJb3Y9du7KDKX5Ki4TOrNiKYve7Stxg/viewform?embedded=true"
+				width="100%"
+				height="686"
+				style="border: none;"
+				allowfullscreen
+				loading="lazy"
+				title="Mailing List Signup Form"
+			  >
+				Loading…
+			  </iframe>
+			</div>
+		  </div>
+		</div>
+	  </div>
 	</div>
-</div>
+  </div>
 
 <style>
 	.contact-content {
@@ -30,24 +53,24 @@
 		background: var(--color-bg-1);
 		border-radius: 8px;
 		text-align: center;
+		margin-bottom: 2rem;
 	}
 
-	.contact-details {
-		margin: 2rem 0;
-	}
-
-	.contact-item {
+	.contact-form {
 		display: flex;
-		align-items: flex-start;
-		gap: 1rem;
-		margin-bottom: 1.5rem;
+		justify-content: center;
+
+		margin: 2rem 0;
+		background: var(--color-bg-1);
+		border-radius: 8px;
+		padding: 1rem;
 	}
 
-	.contact-item i {
-		color: var(--color-theme-1);
-		font-size: 1.2rem;
-		margin-top: 0.2rem;
+	.contact-form iframe {
+		max-width: 100%;
+		border-radius: 4px;
 	}
+
 
 	.submit-button {
 		display: inline-block;
@@ -74,8 +97,11 @@
 		}
 
 		.submit-button {
-
 			text-align: center;
+		}
+		
+		.contact-form iframe {
+			height: 720px; /* Slightly taller on mobile for better form visibility */
 		}
 	}
 </style>
