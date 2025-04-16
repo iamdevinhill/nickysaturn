@@ -229,7 +229,7 @@
         
         .popup-container {
             width: 95%;
-            max-height: 95vh;
+            max-height: 70vh;
         }
         
         .popup-content {
