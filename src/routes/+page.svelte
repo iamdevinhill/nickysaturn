@@ -5,93 +5,120 @@
     import artistImage2 from '$lib/images/soak.jpg';
     import artistImage3 from '$lib/images/meant.jpg';
     import artistImage4 from '$lib/images/divine.jpg';
-
-    // Array of images for the slideshow
+    import { supabase } from '$lib/supabaseClient';
+  
     const images = [artistImage1, artistImage2, artistImage3, artistImage4];
-
-    // Variables to track the current image
+  
     let currentImageIndex = 0;
     let opacity = 1;
-    
-    // Pop-up variables
     let showPopup = false;
-    
-    // Function to handle the slideshow
+  
+    let fullName = '';
+    let email = '';
+    let phone = '';
+    let message = '';
+  
     function startSlideshow() {
-        setInterval(() => {
-            // Start fade out
-            opacity = 0;
-            
-            // After fade out, change image and fade in
-            setTimeout(() => {
-                currentImageIndex = (currentImageIndex + 1) % images.length;
-                opacity = 1;
-            }, 1000); // Match the CSS transition duration
-        }, 5000); // Change image every 5 seconds
-    }
-    
-    // Function to close the popup
-    function closePopup() {
-        showPopup = false;
-    }
-
-    onMount(() => {
-        startSlideshow();
-        
-        // Show popup after a delay (1 second)
+      setInterval(() => {
+        opacity = 0;
         setTimeout(() => {
-            showPopup = true;
+          currentImageIndex = (currentImageIndex + 1) % images.length;
+          opacity = 1;
         }, 1000);
-    });
-</script>
+      }, 5000);
+    }
+  
+    function closePopup() {
+      showPopup = false;
+    }
+  
+    const handleSubmit = async () => {
+        console.log('SUBMIT CALLED');
 
-<svelte:head>
+message = '';
+
+if (!fullName || !email || !phone) {
+  message = 'All fields are required';
+  console.log('Validation failed');
+  return;
+}
+
+try {
+    const { data, error } = await supabase.from('nicky_saturn_mailing_list').insert({
+    full_name: fullName,
+    email_address: email,
+    phone_number: phone
+});
+
+
+  console.log('SUPABASE RESPONSE:', { data, error });
+
+  if (error) {
+    console.error('SUPABASE INSERT ERROR:', error);
+    message = `Error: ${error.message || JSON.stringify(error)}`;
+  } else {
+    message = 'Successfully submitted!';
+    fullName = email = phone = '';
+  }
+} catch (err) {
+  console.error('Unexpected error:', err);
+  message = `Unexpected error: ${err.message}`;
+}
+
+};
+
+  
+    onMount(() => {
+      startSlideshow();
+      setTimeout(() => {
+        showPopup = true;
+      }, 1000);
+    });
+  </script>
+  
+  <svelte:head>
     <title>Nicky Saturn - Official Website</title>
     <meta name="description" content="Official website of Nicky Saturn" />
-</svelte:head>
-
-<section class="hero">
+  </svelte:head>
+  
+  <section class="hero">
     <div
-        class="background"
-        style={`background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${images[currentImageIndex]}); opacity: ${opacity}`}
+      class="background"
+      style={`background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${images[currentImageIndex]}); opacity: ${opacity}`}
     ></div>
-
+  
     <div class="hero-content">
-        <h1>Nicky Saturn</h1>
-        <p class="tagline">New Single Out Now</p>
-        <a href="/music" class="cta-button">Listen Here</a>
+      <h1>Nicky Saturn</h1>
+      <p class="tagline">New Single Out Now</p>
+      <a href="/music" class="cta-button">Listen Here</a>
     </div>
-</section>
-
-<!-- Pop-up Google Form -->
-{#if showPopup}
+  </section>
+  
+  {#if showPopup}
     <div class="popup-overlay" transition:fade={{ duration: 200 }}>
-        <div class="popup-container">
-            <button class="close-button" on:click={closePopup}>×</button>
-            
-            <div class="popup-content">
-                <h2><center>Sign up for Nicky Saturn's mailing list for updates on new music, shows, and more.</center></h2>
-                
-                <div class="google-form-container">
-                    <iframe 
-                        src="https://docs.google.com/forms/d/e/1FAIpQLSeokl89e_3CQmiqdyBUJb3Y9du7KDKX5Ki4TOrNiKYve7Stxg/viewform?embedded=true" 
-                        width="100%" 
-                        height="500" 
-                        frameborder="0" 
-                        marginheight="0" 
-                        marginwidth="0"
-                        title="Contact Form"
-                    >
-                        Loading…
-                    </iframe>
-                </div>
-            </div>
+      <div class="popup-container">
+        <button class="close-button" on:click={closePopup}>×</button>
+  
+        <div class="popup-content">
+          <h2><center>Sign up for Nicky Saturn's mailing list for updates on new music, shows, and more.</center></h2>
+  
+          <form on:submit|preventDefault={handleSubmit} class="space-y-4 mt-4">
+            <input class="w-full p-2 border" type="text" bind:value={fullName} placeholder="Full Name" />
+            <input class="w-full p-2 border" type="email" bind:value={email} placeholder="Email" />
+            <input class="w-full p-2 border" type="tel" bind:value={phone} placeholder="Phone Number" />
+            <button class="bg-blue-500 text-white p-2 rounded w-full" type="submit">Submit</button>
+          </form>
+  
+          {#if message}
+            <p class="mt-4 text-center">{message}</p>
+          {/if}
         </div>
+      </div>
     </div>
-{/if}
-
-<style>
-    .hero {
+  {/if}
+  
+  <style>
+        .hero {
         height: calc(100vh - 5rem);
         position: relative;
         overflow: hidden;
@@ -236,4 +263,5 @@
             padding: 1.5rem 1.5rem 0;
         }
     }
-</style>
+  </style>
+  
