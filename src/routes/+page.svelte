@@ -33,67 +33,70 @@
     }
   
     const handleSubmit = async () => {
-      message = '';
-      console.log('SUBMIT STARTED');
-  
-      if (!fullName || !email || !phone) {
-        message = 'All fields are required';
-        console.log('Validation failed');
-        return;
-      }
-  
-      try {
-        const body = {
-          full_name: fullName,
-          email_address: email,
-          phone_number: phone
-        };
-  
-        const { data: sessionData } = await supabase.auth.getSession();
-        const token = sessionData?.session?.access_token;
-  
-        const res = await fetch('/api/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token && { Authorization: `Bearer ${token}` })
-          },
-          body: JSON.stringify(body)
-        });
-  
-        const result = await res.json();
-        console.log('API RESPONSE:', result);
-  
-        if (!res.ok) {
-          message = `Error: ${result.error || 'Unknown error'}`;
-        } else {
-          message = 'Successfully submitted!';
-          fullName = email = phone = '';
-        }
-      } catch (err) {
-        console.error('Unexpected error:', err);
-        message = `Unexpected error: ${err.message}`;
-      }
+  message = '';
+
+  const nameValid = fullName.trim().split(' ').length >= 2;
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const cleanedPhone = phone.replace(/\D/g, '');
+    const phoneValid = /^\d{10}$/.test(cleanedPhone) && !/(.)\1{9}/.test(cleanedPhone);
+
+  if (!nameValid) {
+    message = 'Please enter your full name (first and last).';
+    return;
+  }
+  if (!emailValid) {
+    message = 'Please enter a valid email address.';
+    return;
+  }
+  if (!phoneValid) {
+    message = 'Phone number must be 10 digits.';
+    return;
+  }
+
+  try {
+    const body = {
+      full_name: fullName,
+      email_address: email,
+      phone_number: phone
     };
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData?.session?.access_token;
+
+    const res = await fetch('/api/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` })
+      },
+      body: JSON.stringify(body)
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      message = `Error: ${result.error || 'Unknown error'}`;
+    } else {
+      message = 'Successfully submitted!';
+      fullName = email = phone = '';
+    }
+  } catch (err) {
+    message = `Unexpected error: ${err.message}`;
+  }
+};
+
   
     onMount(async () => {
       const { data: sessionData } = await supabase.auth.getSession();
-  
       if (!sessionData?.session) {
-        const { data, error } = await supabase.auth.signInAnonymously();
-        console.log('anon session started', { data, error });
+        await supabase.auth.signInAnonymously();
       }
-  
       startSlideshow();
       setTimeout(() => {
         showPopup = true;
       }, 1000);
     });
   </script>
-  
-  
-  <!-- HTML and styling remain unchanged -->
-  
   
   <svelte:head>
     <title>Nicky Saturn - Official Website</title>
@@ -105,7 +108,6 @@
       class="background"
       style={`background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${images[currentImageIndex]}); opacity: ${opacity}`}
     ></div>
-  
     <div class="hero-content">
       <h1>Nicky Saturn</h1>
       <p class="tagline">New Single Out Now</p>
@@ -117,45 +119,21 @@
     <div class="popup-overlay" transition:fade={{ duration: 200 }}>
       <div class="popup-container">
         <button class="close-button" on:click={closePopup}>×</button>
-  
         <div class="popup-content">
           <h2><center>Sign up for Nicky Saturn's mailing list for updates on new music, shows, and more.</center></h2>
-  
-          <form on:submit|preventDefault={handleSubmit} class="space-y-4 mt-4">
-            <input
-              class="w-full p-3 border border-gray-300 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-theme-1"
-              type="text"
-              bind:value={fullName}
-              placeholder="Full Name"
-            />
-            <input
-              class="w-full p-3 border border-gray-300 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-theme-1"
-              type="email"
-              bind:value={email}
-              placeholder="Email"
-            />
-            <input
-              class="w-full p-3 border border-gray-300 rounded bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-theme-1"
-              type="tel"
-              bind:value={phone}
-              placeholder="Phone Number"
-            />
-            <button
-              class="w-full p-3 rounded bg-[var(--color-theme-1)] text-white font-bold uppercase tracking-wide hover:bg-[#1a7ba1]"
-              type="submit"
-            >
-              Submit
-            </button>
+          <form on:submit|preventDefault={handleSubmit} class="form-group">
+            <input class="form-input" type="text" bind:value={fullName} placeholder="Full Name" />
+            <input class="form-input" type="email" bind:value={email} placeholder="Email Address" />
+            <input class="form-input" type="tel" bind:value={phone} placeholder="10 Digit Phone Number (No dashes)" />
+            <button class="form-button" type="submit">Submit</button>
           </form>
-  
           {#if message}
-            <p class="mt-4 text-center">{message}</p>
+            <p class="mt-4 text-center" style="color:black">{message}</p>
           {/if}
         </div>
       </div>
     </div>
   {/if}
-  
   
   <style>
     .hero {
@@ -168,7 +146,6 @@
       text-align: center;
       color: white;
     }
-  
     .background {
       position: absolute;
       top: 0;
@@ -179,41 +156,40 @@
       background-position: center;
       transition: opacity 1s ease-in-out;
     }
-  
     .hero-content {
       position: relative;
       z-index: 3;
       padding: 2rem;
     }
-  
     h1 {
       font-size: 4rem;
       margin: 0;
       letter-spacing: 0.2em;
     }
-  
     .tagline {
       font-size: 1.5rem;
       margin: 1rem 0 2rem;
     }
-  
     .cta-button {
-      display: inline-block;
-      padding: 1rem 2rem;
-      background-color: var(--color-theme-1);
-      color: white;
-      border-radius: 4px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      transition: background-color 0.2s;
-    }
-  
-    .cta-button:hover {
-      background-color: #1a7ba1;
-      color: white;
-    }
-  
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--color-theme-1);
+  color: white;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(26, 123, 161, 0.2);
+  text-decoration: none;
+}
+
+.cta-button:hover {
+  background-color: #1a7ba1;
+  color: white;
+}
     .popup-overlay {
       position: fixed;
       top: 0;
@@ -226,7 +202,6 @@
       justify-content: center;
       z-index: 100;
     }
-  
     .popup-container {
       background-color: white;
       border-radius: 8px;
@@ -239,7 +214,6 @@
       display: flex;
       flex-direction: column;
     }
-  
     .close-button {
       position: absolute;
       top: 10px;
@@ -251,54 +225,78 @@
       color: #666;
       z-index: 2;
     }
-  
     .close-button:hover {
       color: #000;
     }
-  
     .popup-content {
-      padding: 2rem 2rem 0;
+      padding: 2rem 2rem 2rem;
       overflow-y: auto;
       flex: 1;
     }
-  
     .popup-content h2 {
       color: var(--color-theme-1);
       margin-top: 0;
       font-size: 1.8rem;
     }
-  
-    .google-form-container {
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
       margin-top: 1rem;
-      overflow: hidden;
+      padding-bottom: 1rem;
     }
-  
-    .google-form-container iframe {
-      display: block;
-      overflow: hidden;
+    .form-input {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      background-color: white;
+      color: black;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-  
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-theme-1);
+      box-shadow: 0 0 0 3px rgba(26, 123, 161, 0.3);
+    }
+    .form-button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--color-theme-1);
+      color: white;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+    .form-button:hover {
+      background-color: #1a7ba1;
+    }
     @media (max-width: 768px) {
       h1 {
         font-size: 2.5rem;
       }
-  
       .tagline {
         font-size: 1.2rem;
       }
-  
       .cta-button {
         padding: 0.8rem 1.5rem;
         font-size: 0.9rem;
       }
-  
       .popup-container {
         width: 95%;
         max-height: 70vh;
       }
-  
       .popup-content {
-        padding: 1.5rem 1.5rem 0;
+        padding: 1.5rem 1.5rem 1.5rem;
+      }
+      .form-group {
+        gap: 0.75rem;
+        padding-bottom: 0.75rem;
       }
     }
   </style>

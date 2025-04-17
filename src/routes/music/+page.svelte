@@ -43,19 +43,24 @@
 	}
 
 	.stream-button {
-		display: inline-block;
-		padding: 0.5rem 1rem;
-		background-color: var(--color-theme-1);
-		color: white;
-		border-radius: 4px;
-		margin-top: 1rem;
-		text-decoration: none;
-	}
+  display: inline-flex;
+  align-items: center;
+  padding: 0.95rem 1.5rem;
+  background-color: var(--color-theme-1);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(26, 123, 161, 0.2);
+  margin-top: 1rem;
+}
 
-	.stream-button:hover {
-		background-color: #1a7ba1;
-		color: white;
-	}
+.stream-button:hover {
+  background-color: #1a7ba1;
+  color: white;
+}
 
 	@media (max-width: 768px) {
 		.albums {
