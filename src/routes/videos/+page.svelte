@@ -60,12 +60,6 @@
 			</div>
 			<h3>"Soak Up The Sun (Cover)"</h3>
 		</div>
-		<div class="video">
-			<div class="video-container">
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/hCpDmzDw2oU?si=F4INe1OblR2d1LvU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-			</div>
-			<h3>"Soak Up The Sun (Cover)"</h3>
-		</div>
 	</div>
 </div>
 
