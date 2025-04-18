@@ -235,53 +235,53 @@
           </h2>
   
           {#if !submitted}
-            <form on:submit|preventDefault={handleSubmit} class="form-group" novalidate>
-              <div class="form-field">
-                <label for="fullName" class="visually-hidden">Full Name</label>
-                <input
-                  id="fullName"
-                  class="form-input"
-                  type="text"
-                  bind:value={fullName}
-                  placeholder="Full Name"
-                  required
-                  aria-required="true"
-                />
-              </div>
-              
-              <div class="form-field">
-                <label for="email" class="visually-hidden">Email Address</label>
-                <input
-                  id="email"
-                  class="form-input"
-                  type="email"
-                  bind:value={email}
-                  placeholder="Email Address"
-                  required
-                  aria-required="true"
-                />
-              </div>
-              
-              <div class="form-field">
-                <label for="phone" class="visually-hidden">Phone Number</label>
-                <input
-                  id="phone"
-                  class="form-input"
-                  type="tel"
-                  bind:value={phone}
-                  on:keydown={preventExtraDigits}
-                  on:input={handlePhoneInput}
-                  maxlength="14"
-                  placeholder="10 Digits (No Dashes)"
-                  required
-                  aria-required="true"
-                />
-              </div>
-              
-              <button class="form-button" type="submit" disabled={isSubmitting}>
-                {#if isSubmitting}Submitting...{:else}Submit{/if}
-              </button>
-            </form>
+          <form on:submit|preventDefault={handleSubmit} class="form-group" novalidate>
+            <div class="form-field">
+              <label for="fullName">Full Name</label>
+              <input
+                id="fullName"
+                class="form-input"
+                type="text"
+                bind:value={fullName}
+                placeholder="First and Last Name"
+                required
+                aria-required="true"
+              />
+            </div>
+            
+            <div class="form-field">
+              <label for="email">Email Address</label>
+              <input
+                id="email"
+                class="form-input"
+                type="email"
+                bind:value={email}
+                placeholder="your@email.com"
+                required
+                aria-required="true"
+              />
+            </div>
+            
+            <div class="form-field">
+              <label for="phone">Phone Number</label>
+              <input
+                id="phone"
+                class="form-input"
+                type="tel"
+                bind:value={phone}
+                on:keydown={preventExtraDigits}
+                on:input={handlePhoneInput}
+                maxlength="14"
+                placeholder="10 Digits (No dashes)"
+                required
+                aria-required="true"
+              />
+            </div>
+            
+            <button class="form-button" type="submit" disabled={isSubmitting}>
+              {#if isSubmitting}Submitting...{:else}Submit{/if}
+            </button>
+          </form>
           {:else}
             <div class="success-message" transition:fade role="alert">
               <div class="success-icon">✓</div>
@@ -429,6 +429,14 @@
       display: flex;
       flex-direction: column;
     }
+
+    .form-field label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #2d3748;
+  margin-left: 0.5rem;
+  margin-bottom: 0.375rem;
+}
     .visually-hidden {
       position: absolute;
       width: 1px;
