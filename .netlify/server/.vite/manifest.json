@@ -12,6 +12,10 @@
     "file": "chunks/exports.js",
     "name": "exports"
   },
+  "_index.js": {
+    "file": "chunks/index.js",
+    "name": "index"
+  },
   "_internal.js": {
     "file": "chunks/internal.js",
     "name": "internal",
@@ -34,6 +38,10 @@
       "_ssr.js",
       "_exports.js"
     ]
+  },
+  "_supabaseClient.js": {
+    "file": "chunks/supabaseClient.js",
+    "name": "supabaseClient"
   },
   "node_modules/@fontsource/fira-mono/files/fira-mono-cyrillic-400-normal.woff": {
     "file": "_app/immutable/assets/fira-mono-cyrillic-400-normal.Dq7SlH2J.woff",
@@ -101,6 +109,7 @@
     "imports": [
       "_prod-ssr.js",
       "_internal.js",
+      "_index.js",
       "_exports.js",
       "_ssr.js"
     ]
@@ -131,7 +140,7 @@
       "_stores.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.Dzrw-bBa.css"
+      "_app/immutable/assets/_layout.BKvsM-n5.css"
     ],
     "assets": [
       "_app/immutable/assets/fira-mono-cyrillic-ext-400-normal.B04YIrm4.woff2",
@@ -160,10 +169,11 @@
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_ssr.js"
+      "_ssr.js",
+      "_supabaseClient.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.3c-WZYrl.css"
+      "_app/immutable/assets/_page.BcMKe5Gh.css"
     ],
     "assets": [
       "_app/immutable/assets/time.DGerwdja.jpg",
@@ -190,16 +200,26 @@
       "_ssr.js"
     ]
   },
+  "src/routes/api/signup/+server.ts": {
+    "file": "entries/endpoints/api/signup/_server.ts.js",
+    "name": "entries/endpoints/api/signup/_server.ts",
+    "src": "src/routes/api/signup/+server.ts",
+    "isEntry": true,
+    "imports": [
+      "_index.js"
+    ]
+  },
   "src/routes/contact/+page.svelte": {
     "file": "entries/pages/contact/_page.svelte.js",
     "name": "entries/pages/contact/_page.svelte",
     "src": "src/routes/contact/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_ssr.js"
+      "_ssr.js",
+      "_supabaseClient.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.C_JlNCtc.css"
+      "_app/immutable/assets/_page.BmFdO1lW.css"
     ]
   },
   "src/routes/music/+page.svelte": {
@@ -211,7 +231,7 @@
       "_ssr.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.CxTUrdws.css"
+      "_app/immutable/assets/_page.YLRw7vJP.css"
     ]
   },
   "src/routes/tour/+page.svelte": {
@@ -235,7 +255,7 @@
       "_ssr.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.ZfyK-cts.css"
+      "_app/immutable/assets/_page.B2SkrmdW.css"
     ]
   }
 }

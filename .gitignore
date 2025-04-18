@@ -1,21 +1,32 @@
+# Node modules
 node_modules
 
-# Output
+# SvelteKit output
+.svelte-kit
+/build
 .output
 .vercel
-/.svelte-kit
-/build
 
-# OS
+# System files
 .DS_Store
 Thumbs.db
 
-# Env
+# Environment files
 .env
-.env.*
-!.env.example
+.env.*        # ignore all .env files...
+!.env.example # ...except example templates
 !.env.test
 
-# Vite
+# Vite junk
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Editor & IDE settings
+.vscode/
+.idea/
+*.swp
