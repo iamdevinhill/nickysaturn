@@ -272,7 +272,7 @@
                   on:keydown={preventExtraDigits}
                   on:input={handlePhoneInput}
                   maxlength="14"
-                  placeholder="10 Digit Phone Number (No Dashes)"
+                  placeholder="10 Digits (No Dashes)"
                   required
                   aria-required="true"
                 />
