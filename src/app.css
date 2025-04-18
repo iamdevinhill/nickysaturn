@@ -1,63 +1,67 @@
 @import '@fontsource/fira-mono';
 
 :root {
-	--font-body: 'Consolas', 'Courier New', monospace;
-	--color-bg-0: #0a0a0a;
-	--color-bg-1: #111111;
-	--color-bg-2: #1a1a1a;
-	--color-theme-1: #2596be;
-	--color-theme-2: #4075a6;
-	--color-text: rgba(255, 255, 255, 0.9);
-	--column-width: 42rem;
-	--column-margin-top: 4rem;
-	font-family: var(--font-body);
-	color: var(--color-text);
+  --font-body: 'Fira Mono', monospace;
+  --color-bg-0: #0a0a0a;
+  --color-bg-1: #111111;
+  --color-bg-2: #1a1a1a;
+  --color-theme-1: #2596be;
+  --color-theme-2: #4075a6;
+  --color-text: rgba(255, 255, 255, 0.9);
+  --column-width: 42rem;
+  --column-margin-top: 4rem;
 }
 
 body {
-	min-height: 100vh;
-	margin: 0;
-	background-color: var(--color-bg-0);
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--color-bg-0);
+  font-family: var(--font-body);
+  color: var(--color-text);
 }
 
 h1, h2, h3, p {
-	font-weight: 400;
-	color: var(--color-text);
-	font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--color-text);
+  font-family: var(--font-body);
 }
 
 p {
-	line-height: 1.5;
+  line-height: 1.5;
 }
 
 a {
-	color: var(--color-text);
-	text-decoration: none;
-	transition: color 0.2s;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
 a:hover {
-	color: var(--color-theme-1);
+  color: var(--color-theme-1);
 }
 
 h1 {
-	font-size: 3rem;
-	text-align: center;
-	font-weight: 700;
+  font-size: 3rem;
+  text-align: center;
+  font-weight: 700;
 }
 
 .container {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 0 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .text-center {
-	text-align: center;
+  text-align: center;
+}
+
+button, input, select, textarea, a {
+  font-family: inherit;
 }
 
 @media (max-width: 768px) {
-	h1 {
-		font-size: 2rem;
-	}
+  h1 {
+    font-size: 2rem;
+  }
 }

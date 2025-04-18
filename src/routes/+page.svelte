@@ -1,7 +1,9 @@
 <script>
     import { onMount } from 'svelte';
-    import { fade } from 'svelte/transition';
     import { supabase } from '$lib/supabaseClient';
+    import { fade } from 'svelte/transition';
+    
+    // Import images with proper error handling
     import artistImage1 from '$lib/images/time.jpg';
     import artistImage2 from '$lib/images/soak.jpg';
     import artistImage3 from '$lib/images/meant.jpg';
@@ -12,14 +14,158 @@
     let currentImageIndex = 0;
     let opacity = 1;
     let showPopup = false;
+    let intervalId;
   
     let fullName = '';
     let email = '';
     let phone = '';
     let message = '';
+    let messageType = 'error';
+    let submitted = false;
+    let isSubmitting = false;
   
+    // Improved phone formatting with reactive declaration
+    $: formattedPhone = formatPhoneNumber(phone.replace(/\D/g, ''));
+  
+    function formatPhoneNumber(digits) {
+      if (!digits) return '';
+      if (digits.length <= 3) {
+        return digits;
+      } else if (digits.length <= 6) {
+        return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+      } else {
+        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+      }
+    }
+  
+    // Prevent typing more than 10 digits with improved handling
+    function preventExtraDigits(e) {
+      const digits = phone.replace(/\D/g, '');
+      // Allow control keys (backspace, delete, arrows)
+      if (!e.ctrlKey && !e.metaKey && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+        if (/\d/.test(e.key) && digits.length >= 10) {
+          e.preventDefault();
+        }
+      }
+    }
+  
+    function handlePhoneInput(e) {
+      let digits = e.target.value.replace(/\D/g, '');
+      if (digits.length > 10) digits = digits.slice(0, 10);
+      phone = formatPhoneNumber(digits);
+    }
+  
+    // Improved form validation
+    function validateForm() {
+      // Name validation - require at least two words
+      const nameWords = fullName.trim().split(/\s+/).filter((part) => part.length > 0);
+      if (nameWords.length < 2) {
+        message = 'Please enter your full name (first and last).';
+        return false;
+      }
+  
+      // Email validation with better regex
+      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      if (!emailRegex.test(email)) {
+        message = 'Please enter a valid email address.';
+        return false;
+      }
+  
+      // Phone validation - must be exactly 10 digits
+      const cleanedPhone = phone.replace(/\D/g, '');
+      // Check for valid length and prevent repeated digits like 1111111111
+      if (cleanedPhone.length !== 10) {
+        message = 'Please enter a valid 10-digit phone number.';
+        return false;
+      }
+      
+      if (/^(.)\1{9}$/.test(cleanedPhone)) {
+        message = 'Please enter a valid phone number (not all same digits).';
+        return false;
+      }
+  
+      return true;
+    }
+  
+    // Improved form submission with better error handling
+    const handleSubmit = async () => {
+      message = '';
+      messageType = 'error';
+      isSubmitting = true;
+  
+      if (!validateForm()) {
+        isSubmitting = false;
+        return;
+      }
+  
+      try {
+        const body = {
+          full_name: fullName.trim(),
+          email_address: email.trim(),
+          phone_number: phone.replace(/\D/g, '')
+        };
+  
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          throw new Error('Authentication error: ' + sessionError.message);
+        }
+        
+        const token = sessionData?.session?.access_token;
+  
+        const res = await fetch('/api/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` })
+          },
+          body: JSON.stringify(body)
+        });
+  
+        // Handle non-JSON responses
+        const contentType = res.headers.get("content-type");
+        let result;
+        
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          result = await res.json();
+        } else {
+          const text = await res.text();
+          result = { error: text };
+        }
+  
+        if (!res.ok) {
+          message = `Error: ${result.error || 'Something went wrong. Please try again.'}`;
+        } else {
+          message = "Thanks for signing up! You'll receive updates soon.";
+          messageType = 'success';
+          fullName = '';
+          email = '';
+          phone = '';
+          await new Promise((r) => setTimeout(r, 300));
+          submitted = true;
+          localStorage.setItem('popupDismissed', 'true');
+          
+          // Auto-hide success message after 5 seconds
+          setTimeout(() => {
+            closePopup();
+          }, 5000);
+        }
+      } catch (err) {
+        console.error('Form submission error:', err);
+        message = `Unexpected error: ${err.message || 'Please try again later.'}`;
+      } finally {
+        isSubmitting = false;
+      }
+    };
+  
+    function closePopup() {
+      showPopup = false;
+      localStorage.setItem('popupDismissed', 'true');
+    }
+  
+    // Improved slideshow with cleanup
     function startSlideshow() {
-      setInterval(() => {
+      intervalId = setInterval(() => {
         opacity = 0;
         setTimeout(() => {
           currentImageIndex = (currentImageIndex + 1) % images.length;
@@ -28,73 +174,36 @@
       }, 5000);
     }
   
-    function closePopup() {
-      showPopup = false;
-    }
-  
-    const handleSubmit = async () => {
-  message = '';
-
-  const nameValid = fullName.trim().split(' ').length >= 2;
-  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const cleanedPhone = phone.replace(/\D/g, '');
-    const phoneValid = /^\d{10}$/.test(cleanedPhone) && !/(.)\1{9}/.test(cleanedPhone);
-
-  if (!nameValid) {
-    message = 'Please enter your full name (first and last).';
-    return;
-  }
-  if (!emailValid) {
-    message = 'Please enter a valid email address.';
-    return;
-  }
-  if (!phoneValid) {
-    message = 'Phone number must be 10 digits.';
-    return;
-  }
-
-  try {
-    const body = {
-      full_name: fullName,
-      email_address: email,
-      phone_number: phone
-    };
-
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData?.session?.access_token;
-
-    const res = await fetch('/api/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` })
-      },
-      body: JSON.stringify(body)
-    });
-
-    const result = await res.json();
-
-    if (!res.ok) {
-      message = `Error: ${result.error || 'Unknown error'}`;
-    } else {
-      message = 'Successfully submitted!';
-      fullName = email = phone = '';
-    }
-  } catch (err) {
-    message = `Unexpected error: ${err.message}`;
-  }
-};
-
-  
+    // Enhanced onMount with proper error handling
     onMount(async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData?.session) {
-        await supabase.auth.signInAnonymously();
+      try {
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+        }
+        
+        if (!sessionData?.session) {
+          const { error: signInError } = await supabase.auth.signInAnonymously();
+          if (signInError) {
+            console.error('Anonymous sign-in error:', signInError);
+          }
+        }
+        
+        startSlideshow();
+  
+        const dismissed = localStorage.getItem('popupDismissed');
+        if (dismissed !== 'true') {
+          setTimeout(() => (showPopup = true), 1000);
+        }
+      } catch (err) {
+        console.error('Initialization error:', err);
       }
-      startSlideshow();
-      setTimeout(() => {
-        showPopup = true;
-      }, 1000);
+      
+      // Cleanup function
+      return () => {
+        if (intervalId) clearInterval(intervalId);
+      };
     });
   </script>
   
@@ -103,10 +212,11 @@
     <meta name="description" content="Official website of Nicky Saturn" />
   </svelte:head>
   
-  <section class="hero">
+  <section class="hero" aria-label="Nicky Saturn featured images">
     <div
       class="background"
-      style={`background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${images[currentImageIndex]}); opacity: ${opacity}`}
+      style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url({images[currentImageIndex]}); opacity: {opacity}"
+      aria-hidden="true"
     ></div>
     <div class="hero-content">
       <h1>Nicky Saturn</h1>
@@ -116,19 +226,73 @@
   </section>
   
   {#if showPopup}
-    <div class="popup-overlay" transition:fade={{ duration: 200 }}>
+    <div class="popup-overlay" on:click|self={closePopup} role="dialog" aria-labelledby="popup-title">
       <div class="popup-container">
-        <button class="close-button" on:click={closePopup}>×</button>
+        <button class="close-button" on:click={closePopup} aria-label="Close popup">×</button>
         <div class="popup-content">
-          <h2><center>Sign up for Nicky Saturn's mailing list for updates on new music, shows, and more.</center></h2>
-          <form on:submit|preventDefault={handleSubmit} class="form-group">
-            <input class="form-input" type="text" bind:value={fullName} placeholder="Full Name" />
-            <input class="form-input" type="email" bind:value={email} placeholder="Email Address" />
-            <input class="form-input" type="tel" bind:value={phone} placeholder="10 Digit Phone Number (No dashes)" />
-            <button class="form-button" type="submit">Submit</button>
-          </form>
-          {#if message}
-            <p class="mt-4 text-center" style="color:black">{message}</p>
+          <h2 class="popup-title" id="popup-title">
+            Sign up for Nicky Saturn's mailing list for updates on new music, shows, and more.
+          </h2>
+  
+          {#if !submitted}
+            <form on:submit|preventDefault={handleSubmit} class="form-group" novalidate>
+              <div class="form-field">
+                <label for="fullName" class="visually-hidden">Full Name</label>
+                <input
+                  id="fullName"
+                  class="form-input"
+                  type="text"
+                  bind:value={fullName}
+                  placeholder="Full Name"
+                  required
+                  aria-required="true"
+                />
+              </div>
+              
+              <div class="form-field">
+                <label for="email" class="visually-hidden">Email Address</label>
+                <input
+                  id="email"
+                  class="form-input"
+                  type="email"
+                  bind:value={email}
+                  placeholder="Email Address"
+                  required
+                  aria-required="true"
+                />
+              </div>
+              
+              <div class="form-field">
+                <label for="phone" class="visually-hidden">Phone Number</label>
+                <input
+                  id="phone"
+                  class="form-input"
+                  type="tel"
+                  bind:value={phone}
+                  on:keydown={preventExtraDigits}
+                  on:input={handlePhoneInput}
+                  maxlength="14"
+                  placeholder="10 Digit Phone Number (No Dashes)"
+                  required
+                  aria-required="true"
+                />
+              </div>
+              
+              <button class="form-button" type="submit" disabled={isSubmitting}>
+                {#if isSubmitting}Submitting...{:else}Submit{/if}
+              </button>
+            </form>
+          {:else}
+            <div class="success-message" transition:fade role="alert">
+              <div class="success-icon">✓</div>
+              <p>You've successfully joined the mailing list!</p>
+            </div>
+          {/if}
+  
+          {#if message && !submitted}
+            <div class="feedback {messageType}" transition:fade role="alert">
+              <p>{message}</p>
+            </div>
           {/if}
         </div>
       </div>
@@ -171,25 +335,28 @@
       margin: 1rem 0 2rem;
     }
     .cta-button {
-  display: inline-flex;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: var(--color-theme-1);
-  color: white;
-  border-radius: 0.75rem;
-  font-weight: bold;
-  font-size: 1.05rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(26, 123, 161, 0.2);
-  text-decoration: none;
-}
-
-.cta-button:hover {
-  background-color: #1a7ba1;
-  color: white;
-}
+      display: inline-flex;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: var(--color-theme-1);
+      color: white;
+      border-radius: 0.75rem;
+      font-weight: bold;
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(26, 123, 161, 0.2);
+      text-decoration: none;
+    }
+    .cta-button:hover {
+      background-color: #1a7ba1;
+    }
+    .cta-button:focus {
+      outline: 3px solid rgba(26, 123, 161, 0.5);
+      outline-offset: 2px;
+    }
+  
     .popup-overlay {
       position: fixed;
       top: 0;
@@ -224,26 +391,54 @@
       cursor: pointer;
       color: #666;
       z-index: 2;
+      padding: 5px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
     }
     .close-button:hover {
       color: #000;
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    .close-button:focus {
+      outline: 3px solid rgba(26, 123, 161, 0.5);
+      outline-offset: 2px;
     }
     .popup-content {
-      padding: 2rem 2rem 2rem;
+      padding: 2rem;
       overflow-y: auto;
       flex: 1;
     }
-    .popup-content h2 {
+    .popup-content h2.popup-title {
       color: var(--color-theme-1);
       margin-top: 0;
       font-size: 1.8rem;
+      text-align: center;
     }
+  
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 1rem;
       margin-top: 1rem;
-      padding-bottom: 1rem;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+    }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
     }
     .form-input {
       padding: 0.75rem;
@@ -260,6 +455,7 @@
       border-color: var(--color-theme-1);
       box-shadow: 0 0 0 3px rgba(26, 123, 161, 0.3);
     }
+  
     .form-button {
       width: 100%;
       padding: 0.75rem;
@@ -273,9 +469,64 @@
       cursor: pointer;
       transition: background-color 0.2s ease-in-out;
     }
-    .form-button:hover {
+    .form-button:hover:not(:disabled) {
       background-color: #1a7ba1;
     }
+    .form-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .form-button:focus {
+      outline: 3px solid rgba(26, 123, 161, 0.5);
+      outline-offset: 2px;
+    }
+    
+    /* Updated success message styling to match the second code */
+    .success-message {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    
+    .success-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background-color: #48bb78;
+      color: white;
+      font-size: 2rem;
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+    }
+    
+    .success-message p {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2f855a;
+    }
+  
+    .feedback {
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-top: 1.25rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    .feedback.error {
+      background-color: #c53030;
+      color: var(--color-bg-0, white);
+      border: 1px solid #feb2b2;
+    }
+    
+    .feedback.success {
+      background-color: #f0fff4;
+      color: #2f855a;
+      border: 1px solid #c6f6d5;
+    }
+  
     @media (max-width: 768px) {
       h1 {
         font-size: 2.5rem;
@@ -289,15 +540,21 @@
       }
       .popup-container {
         width: 95%;
-        max-height: 70vh;
+        max-height: 80vh;
       }
       .popup-content {
-        padding: 1.5rem 1.5rem 1.5rem;
+        padding: 1.5rem;
       }
       .form-group {
         gap: 0.75rem;
-        padding-bottom: 0.75rem;
+      }
+      .success-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 1.8rem;
+      }
+      .success-message p {
+        font-size: 1.1rem;
       }
     }
   </style>
-  

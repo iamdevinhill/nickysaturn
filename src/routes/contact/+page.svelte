@@ -29,26 +29,31 @@
   
 	function validateForm() {
 	  // Full name validation - must have at least first and last name
-	  const nameValid = fullName.trim().split(/\s+/).filter(part => part.length > 0).length >= 2;
-	  if (!nameValid) {
+	  const nameWords = fullName.trim().split(/\s+/).filter(part => part.length > 0);
+	  if (nameWords.length < 2) {
 		message = 'Please enter your full name (first and last).';
 		return false;
 	  }
 	  
 	  // Email validation with more comprehensive regex
-	  const emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-	  if (!emailValid) {
-		message = 'Please enter a valid email address.';
-		return false;
-	  }
+	  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      if (!emailRegex.test(email)) {
+        message = 'Please enter a valid email address.';
+        return false;
+      }
 	  
 	  // Phone validation - must be exactly 10 digits after stripping non-digits
 	  const cleanedPhone = phone.replace(/\D/g, '');
-	  const phoneValid = cleanedPhone.length === 10 && !/(.)\1{9}/.test(cleanedPhone);
-	  if (!phoneValid) {
+	  if (cleanedPhone.length !== 10) {
 		message = 'Please enter a valid 10-digit phone number.';
 		return false;
 	  }
+	  
+	  // Check for repeated digits like 1111111111
+	  if (/^(.)\1{9}$/.test(cleanedPhone)) {
+        message = 'Please enter a valid phone number (not all same digits).';
+        return false;
+      }
 	  
 	  return true;
 	}
@@ -71,7 +76,12 @@
 		  phone_number: phone.replace(/\D/g, '') // Store only digits in database
 		};
   
-		const { data: sessionData } = await supabase.auth.getSession();
+		const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+		
+		if (sessionError) {
+		  throw new Error('Authentication error: ' + sessionError.message);
+		}
+		
 		const token = sessionData?.session?.access_token;
   
 		const res = await fetch('/api/signup', {
@@ -83,7 +93,16 @@
 		  body: JSON.stringify(body)
 		});
   
-		const result = await res.json();
+		// Handle non-JSON responses
+		const contentType = res.headers.get("content-type");
+		let result;
+		
+		if (contentType && contentType.indexOf("application/json") !== -1) {
+		  result = await res.json();
+		} else {
+		  const text = await res.text();
+		  result = { error: text };
+		}
   
 		if (!res.ok) {
 		  message = `Error: ${result.error || 'Something went wrong. Please try again.'}`;
@@ -99,7 +118,8 @@
 		  }, 5000);
 		}
 	  } catch (err) {
-		message = `Unexpected error: ${err.message}`;
+		console.error('Form submission error:', err);
+		message = `Unexpected error: ${err.message || 'Please try again later.'}`;
 		messageType = 'error';
 	  } finally {
 		isSubmitting = false;
@@ -107,8 +127,29 @@
 	};
   
 	function handlePhoneInput(e) {
-	  // Update the phone variable with the formatted version
-	  phone = formatPhoneNumber(e.target.value);
+	  const input = e.target;
+	  const digits = input.value.replace(/\D/g, '');
+
+	  // Only allow first 10 digits
+	  const limitedDigits = digits.slice(0, 10);
+	  const formatted = formatPhoneNumber(limitedDigits);
+
+	  // Manually set the input field's visible value
+	  input.value = formatted;
+
+	  // Update phone state
+	  phone = formatted;
+	}
+
+	// Prevent typing more than 10 digits
+	function preventExtraDigits(e) {
+	  const digits = phone.replace(/\D/g, '');
+	  // Allow control keys (backspace, delete, arrows)
+	  if (!e.ctrlKey && !e.metaKey && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+		if (/\d/.test(e.key) && digits.length >= 10) {
+		  e.preventDefault();
+		}
+	  }
 	}
   </script>
   
@@ -118,25 +159,28 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </svelte:head>
   
+  <h1>Contact</h1>
   <div class="container">
-	<h1>Contact</h1>
-  
 	<div class="contact-content">
 	  <div class="contact-info">
 		<div class="card get-in-touch">
-		  <h2>Get in Touch</h2>
-		  <p>For booking inquiries and other business opportunities:</p>
-		  <a href="mailto:nickysaturnmusic@gmail.com" class="email-button">
-			<span class="icon">✉️</span> Email Now
-		  </a>
-		</div>
+			<h2>Get in Touch</h2>
+			<p>For booking inquiries and other business opportunities:</p>
+			<a 
+			  href="mailto:nickysaturnmusic@gmail.com?body=Hello%20Nicky%20Saturn%2C%0A%0AI%20am%20contacting%20you%20to%20talk%20about%20%5Byour%20message%5D.%0A%0AThanks!%0A%0ABest%2C%0A%5BYour%20Name%5D" 
+			  class="email-button"
+			>
+			  <span class="icon">✉️</span> Email Now
+			</a>
+		  </div>
+		  
   
 		<div class="card mailing-list">
 		  <h2>Join the Mailing List</h2>
 		  <p>Sign up to receive updates on new music, upcoming shows, and exclusive content.</p>
   
 		  {#if !submitted}
-			<form on:submit|preventDefault={handleSubmit} class="contact-form">
+			<form on:submit|preventDefault={handleSubmit} class="contact-form" novalidate>
 			  <div class="input-group">
 				<label for="fullName">Full Name</label>
 				<input 
@@ -146,6 +190,7 @@
 				  bind:value={fullName} 
 				  placeholder="First and Last Name"
 				  required 
+				  aria-required="true"
 				/>
 			  </div>
 			  
@@ -158,6 +203,7 @@
 				  bind:value={email} 
 				  placeholder="your@email.com"
 				  required 
+				  aria-required="true"
 				/>
 			  </div>
 			  
@@ -169,8 +215,11 @@
 				  type="tel" 
 				  value={phone}
 				  on:input={handlePhoneInput}
+				  on:keydown={preventExtraDigits}
+				  maxlength="14"
 				  placeholder="10 Digit Phone Number (No dashes)"
 				  required 
+				  aria-required="true"
 				/>
 			  </div>
 			  
@@ -183,14 +232,14 @@
 			  </button>
 			</form>
 		  {:else}
-			<div class="success-message" transition:fade>
+			<div class="success-message" transition:fade role="alert">
 			  <div class="success-icon">✓</div>
 			  <p>You've successfully joined the mailing list!</p>
 			</div>
 		  {/if}
   
 		  {#if message && !submitted}
-			<div class="feedback {messageType}" transition:fade>
+			<div class="feedback {messageType}" transition:fade role="alert">
 			  <p>{message}</p>
 			</div>
 		  {/if}
@@ -227,18 +276,17 @@
 	}
   
 	.card {
-  background-color: var(--color-bg-1);
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
+      background-color: var(--color-bg-1);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
   
 	h2 {
 	  font-size: 1.75rem;
 	  margin-bottom: 1rem;
-	  color: var(--color-theme-1);
+	  color: var(--color-theme);
 	}
   
 	.get-in-touch p {
@@ -247,18 +295,18 @@
 	}
   
 	.email-button {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.95rem 1.5rem;
-  background-color: var(--color-theme-1);
-  color: white;
-  text-decoration: none;
-  border-radius: 0.75rem;
-  font-weight: bold;
-  font-size: 1.05rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(26, 123, 161, 0.2);
-}
+      display: inline-flex;
+      align-items: center;
+      padding: 0.95rem 1.5rem;
+      background-color: var(--color-theme-1);
+      color: white;
+      text-decoration: none;
+      border-radius: 0.75rem;
+      font-weight: bold;
+      font-size: 1.05rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(26, 123, 161, 0.2);
+    }
   
 	.email-button:hover {
 		background-color: #1a7ba1;
@@ -286,7 +334,7 @@
 	.input-group label {
 	  font-weight: 500;
 	  font-size: 0.95rem;
-	  color: #4a5568;
+	  color: var(--color-text);
 	  margin-left: 0.5rem;
 	}
   
@@ -349,8 +397,8 @@
 	}
   
 	.error {
-	  background-color: #fff5f5;
-	  color: #c53030;
+	  background-color: #c53030;
+	  color: var(--color-bg-0);
 	  border: 1px solid #feb2b2;
 	}
   
