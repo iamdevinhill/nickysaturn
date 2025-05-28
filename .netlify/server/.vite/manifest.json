@@ -118,6 +118,10 @@
     "file": "_app/immutable/assets/divine.D_55F0HZ.jpg",
     "src": "src/lib/images/divine.jpg"
   },
+  "src/lib/images/jetta.jpg": {
+    "file": "_app/immutable/assets/jetta.B7fHRFKR.jpg",
+    "src": "src/lib/images/jetta.jpg"
+  },
   "src/lib/images/meant.jpg": {
     "file": "_app/immutable/assets/meant.D16CEgLi.jpg",
     "src": "src/lib/images/meant.jpg"
@@ -137,10 +141,11 @@
     "isEntry": true,
     "imports": [
       "_ssr.js",
-      "_stores.js"
+      "_stores.js",
+      "_supabaseClient.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.BKvsM-n5.css"
+      "_app/immutable/assets/_layout.DnNgP5bh.css"
     ],
     "assets": [
       "_app/immutable/assets/fira-mono-cyrillic-ext-400-normal.B04YIrm4.woff2",
@@ -173,13 +178,14 @@
       "_supabaseClient.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.BcMKe5Gh.css"
+      "_app/immutable/assets/_page.DFg-3wwa.css"
     ],
     "assets": [
       "_app/immutable/assets/time.DGerwdja.jpg",
       "_app/immutable/assets/soak.Dh7UdlRC.jpg",
       "_app/immutable/assets/meant.D16CEgLi.jpg",
-      "_app/immutable/assets/divine.D_55F0HZ.jpg"
+      "_app/immutable/assets/divine.D_55F0HZ.jpg",
+      "_app/immutable/assets/jetta.B7fHRFKR.jpg"
     ]
   },
   "src/routes/about/+page.js": {
