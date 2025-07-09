@@ -1,8 +1,8 @@
 <script>
   const images = [
-    { src: '/src/lib/images/q1.jpg', alt: 'QVegas Magazine', caption: 'QVegas Magazine Cover' },
-    { src: '/src/lib/images/q2.jpg', alt: 'QVegas Magazine', caption: 'QVegas Magazine Page 1' },
-    { src: '/src/lib/images/q3.jpg', alt: 'QVegas Magazine', caption: 'QVegas Magazine Page 2' }
+    { src: '/q1.jpg', alt: 'QVegas Magazine', caption: 'QVegas Magazine Cover' },
+    { src: '/q2.jpg', alt: 'QVegas Magazine', caption: 'QVegas Magazine Page 1' },
+    { src: '/q3.jpg', alt: 'QVegas Magazine', caption: 'QVegas Magazine Page 2' }
   ];
 </script>
 
