@@ -48,6 +48,9 @@
 			<li aria-current={$page.url.pathname === '/videos' ? 'page' : undefined}>
 			  <a href="/videos" on:click={() => menuOpen = false}>Videos</a>
 			</li>
+			<li aria-current={$page.url.pathname === '/press' ? 'page' : undefined}>
+			  <a href="/press" on:click={() => menuOpen = false}>Press</a>
+			</li>
 			<li aria-current={$page.url.pathname === '/tour' ? 'page' : undefined}>
 			  <a href="/tour" on:click={() => menuOpen = false}>Tour</a>
 			</li>

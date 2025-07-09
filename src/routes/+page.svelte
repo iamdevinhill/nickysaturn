@@ -9,8 +9,10 @@
     import artistImage3 from '$lib/images/meant.jpg';
     import artistImage4 from '$lib/images/divine.jpg';
     import artistImage5 from '$lib/images/jetta.jpg';
+    import artistImage6 from '$lib/images/yeom.jpg';
+
   
-    const images = [artistImage5, artistImage1, artistImage2, artistImage3, artistImage4];
+    const images = [artistImage6, artistImage5, artistImage1, artistImage2, artistImage3, artistImage4];
   
     let currentImageIndex = 0;
     let opacity = 1;
