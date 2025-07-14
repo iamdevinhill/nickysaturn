@@ -104,8 +104,9 @@
 				&copy; {new Date().getFullYear()} Nicky Saturn. All rights reserved.
 				<br>
 				<span class="disclaimer">
-					By accessing this website, you agree to have your IP address and general location logged for analytics purposes.
+					This site logs IP addresses for analytics. By continuing to use the site, you consent to this data collection.
 					<br>No personal information is stored.
+					<a href="/privacy">Learn more.</a>
 				</span>
 			</p>
 			
