@@ -28,21 +28,33 @@
 </div>
 
 <style>
-	.albums {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-		gap: 2rem;
-		margin: 2rem 0;
-	}
-
-	.album {
-		text-align: center;
-		padding: 1rem;
-		background: var(--color-bg-1);
-		border-radius: 8px;
-	}
-
-	.stream-button {
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  text-align: center;
+  width: 100%;
+}
+.albums {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+  justify-items: center;
+}
+.album {
+  background: var(--color-bg-1);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+.stream-button {
   display: inline-flex;
   align-items: center;
   padding: 0.95rem 1.5rem;
@@ -56,16 +68,17 @@
   box-shadow: 0 2px 6px rgba(26, 123, 161, 0.2);
   margin-top: 1rem;
 }
-
 .stream-button:hover {
   background-color: #1a7ba1;
   color: white;
 }
-
-	@media (max-width: 768px) {
-		.albums {
-			grid-template-columns: 1fr;
-			padding: 0 1rem;
-		}
-	}
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  .albums {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+}
 </style>

@@ -6,22 +6,35 @@
   ];
 </script>
 
-<section class="press">
-  <h1>Press Highlights</h1>
-  <div class="press-gallery">
-    {#each images as image}
-      <figure>
-        <img src={image.src} alt={image.alt} />
-        <figcaption>{image.caption}</figcaption>
-      </figure>
-    {/each}
-  </div>
-</section>
+<div class="container">
+  <section class="press">
+    <h1>Press Highlights</h1>
+    <div class="press-gallery">
+      {#each images as image}
+        <figure>
+          <img src={image.src} alt={image.alt} />
+          <figcaption>{image.caption}</figcaption>
+        </figure>
+      {/each}
+    </div>
+  </section>
+</div>
 
 <style>
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .press {
-  padding: 2rem;
+  width: 100%;
+}
+h1 {
   text-align: center;
+  width: 100%;
 }
 .press-gallery {
   display: flex;
@@ -45,7 +58,7 @@ figcaption {
   color: #555;
 }
 @media (max-width: 600px) {
-  .press {
+  .container {
     padding: 1rem;
   }
   .press-gallery {

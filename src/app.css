@@ -1,7 +1,7 @@
-@import '@fontsource/fira-mono';
+@import '@fontsource/roboto-condensed';
 
 :root {
-  --font-body: 'Fira Mono', monospace;
+  --font-body: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
   --color-bg-0: #0a0a0a;
   --color-bg-1: #111111;
   --color-bg-2: #1a1a1a;

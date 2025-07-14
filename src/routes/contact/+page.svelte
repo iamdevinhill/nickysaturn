@@ -159,8 +159,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </svelte:head>
   
-  <h1>Contact</h1>
   <div class="container">
+	<h1>Contact</h1>
 	<div class="contact-content">
 	  <div class="contact-info">
 		<div class="card get-in-touch">
@@ -251,18 +251,18 @@
   <style>
 	.container {
 	  max-width: 1200px;
-	  margin: 0 auto;
+	  margin: 2rem auto;
 	  padding: 2rem 1rem;
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
 	}
-  
-	.page-title {
-	  font-size: 2.5rem;
-	  margin-bottom: 2rem;
+	h1, .page-title {
 	  text-align: center;
-	  color: var(--color-theme-1);
+	  width: 100%;
 	}
-  
 	.contact-content {
+	  width: 100%;
 	  display: flex;
 	  justify-content: center;
 	}
@@ -433,14 +433,15 @@
 	}
   
 	@media (max-width: 640px) {
+	  .container {
+		padding: 1rem;
+	  }
 	  .page-title {
 		font-size: 2rem;
 	  }
-  
 	  .card {
 		padding: 1.5rem;
 	  }
-  
 	  h2 {
 		font-size: 1.5rem;
 	  }
